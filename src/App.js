@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
+import './App.css';
 
 const App = () => {
 	const [blogs, setBlogs] = useState([]);
@@ -11,6 +12,8 @@ const App = () => {
 	const [title, setTitle] = useState('');
 	const [author, setAuthor] = useState('');
 	const [url, setUrl] = useState('');
+	const [notification, setNotification] = useState(null);
+	const [notificationType, setNotificationType] = useState(null);
 
 	useEffect(() => {
 		blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -25,20 +28,32 @@ const App = () => {
 		}
 	}, []);
 
+	const showNotification = (message, type) => {
+		setNotification(message);
+		setNotificationType(type);
+		setTimeout(() => {
+			setNotification(null);
+			setNotificationType(null);
+		}, 5000);
+	};
+
 	const handleLogin = async (event) => {
 		event.preventDefault();
+		try {
+			const user = await loginService.login({
+				username,
+				password,
+			});
 
-		const user = await loginService.login({
-			username,
-			password,
-		});
+			window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
 
-		window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
-
-		blogService.setToken(user.token);
-		setUser(user);
-		setUsername('');
-		setPassword('');
+			blogService.setToken(user.token);
+			setUser(user);
+			setUsername('');
+			setPassword('');
+		} catch (error) {
+			showNotification('Wrong username or password', 'error');
+		}
 	};
 
 	const handleNewBlog = async (event) => {
@@ -56,6 +71,10 @@ const App = () => {
 		setTitle('');
 		setAuthor('');
 		setUrl('');
+		showNotification(
+			`A new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+			'success'
+		);
 	};
 
 	const loginForm = () => (
@@ -90,6 +109,9 @@ const App = () => {
 	if (user === null) {
 		return (
 			<div>
+				{notification && (
+					<div className={`notification ${notificationType}`}>{notification}</div>
+				)}
 				<h2>Log in to application</h2>
 				{loginForm()}
 			</div>
@@ -98,6 +120,9 @@ const App = () => {
 
 	return (
 		<div>
+			{notification && (
+				<div className={`notification ${notificationType}`}>{notification}</div>
+			)}
 			<h2>blogs</h2>
 			<div>
 				<p>{user.name} logged in</p>
