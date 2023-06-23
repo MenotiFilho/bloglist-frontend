@@ -1,59 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import { PropTypes } from 'prop-types'
 
 const NewBlog = ({ handleNewBlog }) => {
-	const [title, setTitle] = useState('');
-	const [author, setAuthor] = useState('');
-	const [url, setUrl] = useState('');
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
-	const handleSubmit = (event) => {
-		event.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault()
 
-		const newBlog = {
-			title,
-			author,
-			url,
-			likes: 0,
-		};
+    const newBlog = {
+      title,
+      author,
+      url,
+      likes: 0,
+    }
 
-		handleNewBlog(newBlog);
+    handleNewBlog(newBlog)
 
-		setTitle('');
-		setAuthor('');
-		setUrl('');
-	};
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+  NewBlog.propTypes = {
+    handleNewBlog: PropTypes.func.isRequired,
+  }
 
-	return (
-		<div>
-			<h2>create new</h2>
-			<form onSubmit={handleSubmit}>
-				<div>
+  return (
+    <div>
+      <h2>create new</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
 					title:
-					<input
-						type="text"
-						value={title}
-						onChange={(event) => setTitle(event.target.value)}
-					/>
-				</div>
-				<div>
+          <input
+            type="text"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+          />
+        </div>
+        <div>
 					author:
-					<input
-						type="text"
-						value={author}
-						onChange={(event) => setAuthor(event.target.value)}
-					/>
-				</div>
-				<div>
+          <input
+            type="text"
+            value={author}
+            onChange={(event) => setAuthor(event.target.value)}
+          />
+        </div>
+        <div>
 					url:
-					<input
-						type="text"
-						value={url}
-						onChange={(event) => setUrl(event.target.value)}
-					/>
-				</div>
-				<button type="submit">create</button>
-			</form>
-		</div>
-	);
-};
+          <input
+            type="text"
+            value={url}
+            onChange={(event) => setUrl(event.target.value)}
+          />
+        </div>
+        <button type="submit">create</button>
+      </form>
+    </div>
+  )
+}
 
-export default NewBlog;
+export default NewBlog
